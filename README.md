@@ -2,6 +2,11 @@
 
 ### Prerequisites
 
+```
+* Open https://petalinux.xilinx.com/ in a web browser. this makes sure we have a good connection to the yocto downloads.
+* Set "Defaults:username timestamp_timeout=120" in the sudoers file for a 120-minute password-free session.
+```
+
 **Required tools:**
 
 * Ubuntu 22.04 LTS 64-bit host PC
