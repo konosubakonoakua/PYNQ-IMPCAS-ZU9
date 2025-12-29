@@ -42,7 +42,7 @@ make checkenv
 In the root directory (`<LOCAL_PYNQ-IMPCAS-ZU9_REPO>/`) run `make`.
 
 ```shell
-taskset -c 0,1,2,3 make 2>&1 | tee build.log
+taskset -c 0,1,2,3 make all 2>&1 | tee "pynq_build_$(date +%Y%m%d_%H%M%S).log"
 ```
 
 Once the build has completed, if successful a SD card image will be available under the directory `<LOCAL_PYNQ-IMPCAS-ZU9_REPO>/sdbuild/output/Pynq-IMPCAS-ZU9-3.1.2.img`.
