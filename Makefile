@@ -7,6 +7,9 @@
 PYNQ_ROOTFS_VERSION ?= 3.1.0
 PYNQ_SDIST_VERSION ?= 3.1.2
 
+# PYNQ build configuration
+PYNQ_PSWD ?= imp
+
 # Prebuilt file URLs
 PYNQ_ROOTFS_URL ?= https://download.amd.com/opendownload/pynq/jammy.aarch64.$(PYNQ_ROOTFS_VERSION).tar.gz
 PYNQ_SDIST_URL ?= https://download.amd.com/opendownload/pynq/pynq-$(PYNQ_SDIST_VERSION).tar.gz
@@ -59,7 +62,7 @@ all: gitsubmodule base image ## Build complete project (default: all)
 
 .PHONY: image
 image: gitsubmodule ${PREBUILT_SDIST} ${PREBUILT_IMAGE} ## Build SD card image
-	cd ${ROOT_PATH}/pynq/sdbuild/ && make BOARDDIR=${ROOT_PATH}/ BOARDS=${BOARD_NAME}
+	cd ${ROOT_PATH}/pynq/sdbuild/ && make BOARDDIR=${ROOT_PATH}/ BOARDS=${BOARD_NAME} PYNQ_PSWD=${PYNQ_PSWD}
 
 .PHONY: base
 base: ${BOARD_FILES} check-xsa ## Verify and build base hardware design
@@ -198,18 +201,20 @@ help: ## Show this help message
 	@echo '  $(YELLOW)BOARD_NAME$(RESET)            Board to build for (default: $(BOARD_NAME))'
 	@echo '  $(YELLOW)PYNQ_ROOTFS_VERSION$(RESET)   RootFS version (default: $(PYNQ_ROOTFS_VERSION))'
 	@echo '  $(YELLOW)PYNQ_SDIST_VERSION$(RESET)    SDist version (default: $(PYNQ_SDIST_VERSION))'
+	@echo '  $(YELLOW)PYNQ_PSWD$(RESET)             PYNQ password (default: $(PYNQ_PSWD))'
 	@echo '  $(YELLOW)SDCARD_DEVICE$(RESET)         SD card device (default: $(SDCARD_DEVICE))'
 	@echo '  $(YELLOW)IMAGE_FILE$(RESET)            Image file path (default: auto-detected)'
 	@echo ''
 	@echo '$(BOLD)Common Examples:$(RESET)'
-	@echo '  $(BLUE)make$(RESET)                     Show this help message'
-	@echo '  $(BLUE)make all$(RESET)                 Build complete project'
-	@echo '  $(BLUE)make sdcard$(RESET)              Burn image to SD card with safety prompt'
-	@echo '  $(BLUE)make sdcard SDCARD_DEVICE=/dev/sdb$(RESET)  Burn to specific device'
-	@echo '  $(BLUE)make sdcard-list$(RESET)         List available block devices'
-	@echo '  $(BLUE)make sdcard-safe$(RESET)         Safe burn with double confirmation'
-	@echo '  $(BLUE)make check-sdcard$(RESET)        Check SD card detection'
-	@echo '  $(BLUE)make cleanbuild$(RESET)          Clean build artifacts'
+	@echo '  $(BLUE)make$(RESET)                                Show this help message'
+	@echo '  $(BLUE)make all$(RESET)                            Build complete project'
+	@echo '  $(BLUE)make image PYNQ_PSWD=custom_pswd$(RESET)    Build with custom password'
+	@echo '  $(BLUE)make sdcard$(RESET)                         Burn image to SD card with safety prompt'
+	@echo '  $(BLUE)make sdcard SDCARD_DEVICE=/dev/sdc$(RESET)  Burn to specific device'
+	@echo '  $(BLUE)make sdcard-list$(RESET)                    List available block devices'
+	@echo '  $(BLUE)make sdcard-safe$(RESET)                    Safe burn with double confirmation'
+	@echo '  $(BLUE)make check-sdcard$(RESET)                   Check SD card detection'
+	@echo '  $(BLUE)make cleanbuild$(RESET)                     Clean build artifacts'
 	@echo ''
 
 # Add aliases for download targets
