@@ -64,6 +64,33 @@ all: gitsubmodule base image ## Build complete project (default: all)
 image: gitsubmodule ${PREBUILT_SDIST} ${PREBUILT_IMAGE} ## Build SD card image
 	cd ${ROOT_PATH}/pynq/sdbuild/ && make BOARDDIR=${ROOT_PATH}/ BOARDS=${BOARD_NAME} PYNQ_PSWD=${PYNQ_PSWD}
 
+.PHONY: boot_files
+boot_files: gitsubmodule ${PREBUILT_SDIST} ${PREBUILT_IMAGE} ## Generate only boot files (BOOT.BIN, image.ub)
+	cd ${ROOT_PATH}/pynq/sdbuild/ && make boot_files BOARDDIR=${ROOT_PATH}/ BOARDS=${BOARD_NAME} PYNQ_PSWD=${PYNQ_PSWD}
+
+.PHONY: bsp
+bsp: gitsubmodule ${PREBUILT_SDIST} ${PREBUILT_IMAGE} ## Generate Petalinux BSP package
+	cd ${ROOT_PATH}/pynq/sdbuild/ && make bsp BOARDDIR=${ROOT_PATH}/ BOARDS=${BOARD_NAME} PYNQ_PSWD=${PYNQ_PSWD}
+
+.PHONY: sysroot
+sysroot: gitsubmodule ${PREBUILT_SDIST} ${PREBUILT_IMAGE} ## Generate SDK sysroot for cross-compilation
+	cd ${ROOT_PATH}/pynq/sdbuild/ && make sysroot BOARDDIR=${ROOT_PATH}/ BOARDS=${BOARD_NAME} PYNQ_PSWD=${PYNQ_PSWD}
+
+.PHONY: clean
+clean: ## Remove all build artifacts
+	cd ${ROOT_PATH}/pynq/sdbuild/ && make clean
+	@echo "$(GREEN)All build artifacts cleaned$(RESET)"
+
+.PHONY: unmount
+unmount: ## Unmount any mounted images
+	cd ${ROOT_PATH}/pynq/sdbuild/ && make unmount
+	@echo "$(GREEN)Mounted images unmounted$(RESET)"
+
+.PHONY: delete
+delete: ## Unmount and delete failed images
+	cd ${ROOT_PATH}/pynq/sdbuild/ && make delete
+	@echo "$(GREEN)Failed images deleted$(RESET)"
+
 .PHONY: base
 base: ${BOARD_FILES} check-xsa ## Verify and build base hardware design
 	@echo "$(GREEN)XSA file verification passed for ${BOARD_NAME}$(RESET)"
@@ -174,6 +201,34 @@ gitsubmodule: ## Initialize and update Git submodules
 .PHONY: cleanbuild
 cleanbuild: ## Clean build artifacts
 	sudo make -C pynq/sdbuild/ clean
+	@echo "$(GREEN)Build artifacts cleaned$(RESET)"
+
+.PHONY: status
+status: ## Show build status and file information
+	@echo "$(BLUE)=== Build Status for ${BOARD_NAME} ===$(RESET)"
+	@echo "Root path: ${ROOT_PATH}"
+	@echo "Board name: ${BOARD_NAME}"
+	@echo "PYNQ password: ${PYNQ_PSWD}"
+	@echo ""
+	@echo "$(BOLD)Key files:$(RESET)"
+	@if [ -f "$(XSA_FILE)" ]; then \
+		echo "$(GREEN)✓ XSA file: $(XSA_FILE)$(RESET)"; \
+	else \
+		echo "$(RED)✗ XSA file: $(XSA_FILE) (MISSING)$(RESET)"; \
+	fi
+	@if [ -f "$(PREBUILT_IMAGE)" ]; then \
+		echo "$(GREEN)✓ RootFS: $(PREBUILT_IMAGE)$(RESET)"; \
+	else \
+		echo "$(YELLOW)✗ RootFS: $(PREBUILT_IMAGE) (Not downloaded)$(RESET)"; \
+	fi
+	@if [ -f "$(PREBUILT_SDIST)" ]; then \
+		echo "$(GREEN)✓ SDist: $(PREBUILT_SDIST)$(RESET)"; \
+	else \
+		echo "$(YELLOW)✗ SDist: $(PREBUILT_SDIST) (Not downloaded)$(RESET)"; \
+	fi
+	@echo ""
+	@echo "$(BOLD)Available images:$(RESET)"
+	@ls ${ROOT_PATH}/pynq/sdbuild/output/*.img 2>/dev/null || echo "$(YELLOW)No built images found$(RESET)"
 
 ##@ Prebuilt Downloads
 
@@ -208,13 +263,16 @@ help: ## Show this help message
 	@echo '$(BOLD)Common Examples:$(RESET)'
 	@echo '  $(BLUE)make$(RESET)                                Show this help message'
 	@echo '  $(BLUE)make all$(RESET)                            Build complete project'
-	@echo '  $(BLUE)make image PYNQ_PSWD=custom_pswd$(RESET)    Build with custom password'
-	@echo '  $(BLUE)make sdcard$(RESET)                         Burn image to SD card with safety prompt'
+	@echo '  $(BLUE)make image$(RESET)                          Build SD card image only'
+	@echo '  $(BLUE)make boot_files$(RESET)                     Generate boot files only'
+	@echo '  $(BLUE)make bsp$(RESET)                            Generate Petalinux BSP'
+	@echo '  $(BLUE)make sysroot$(RESET)                        Generate SDK sysroot'
+	@echo '  $(BLUE)make sdcard$(RESET)                         Burn image to SD card'
 	@echo '  $(BLUE)make sdcard SDCARD_DEVICE=/dev/sdc$(RESET)  Burn to specific device'
-	@echo '  $(BLUE)make sdcard-list$(RESET)                    List available block devices'
-	@echo '  $(BLUE)make sdcard-safe$(RESET)                    Safe burn with double confirmation'
-	@echo '  $(BLUE)make check-sdcard$(RESET)                   Check SD card detection'
-	@echo '  $(BLUE)make cleanbuild$(RESET)                     Clean build artifacts'
+	@echo '  $(BLUE)make status$(RESET)                         Show build status'
+	@echo '  $(BLUE)make unmount$(RESET)                        Unmount ANY mounted images'
+	@echo '  $(BLUE)make delete$(RESET)                         Unmount and delete failed images'
+	@echo '  $(BLUE)make clean$(RESET)                          Clean all artifacts'
 	@echo ''
 
 # Add aliases for download targets
@@ -222,6 +280,6 @@ help: ## Show this help message
 download-rootfs: ${PREBUILT_IMAGE} ## Alias for downloading rootfs
 download-sdist: ${PREBUILT_SDIST}  ## Alias for downloading sdist
 
-.PHONY: all image base check-xsa gitsubmodule cleanbuild help
+.PHONY: all image boot_files bsp sysroot clean unmount delete base check-xsa
 .PHONY: sdcard sdcard-confirm sdcard-burn sdcard-list sdcard-format sdcard-safe check-sdcard check-image
-.PHONY: download-rootfs download-sdist
+.PHONY: gitsubmodule cleanbuild status help download-rootfs download-sdist
