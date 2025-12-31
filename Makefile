@@ -145,7 +145,7 @@ sdcard-confirm: check-image check-sdcard ## Burn image to SD card with interacti
 .PHONY: sdcard-burn
 sdcard-burn: ## Actually burn image to SD card (internal use only)
 	@echo "$(BLUE)Burning image to $(SDCARD_DEVICE)...$(RESET)"
-	sudo dd if=$$(ls $(IMAGE_FILE)) of=$(SDCARD_DEVICE) bs=4M status=progress conv=fsync && sync
+	sudo dd if=$$(ls $(IMAGE_FILE)) of=$(SDCARD_DEVICE) bs=1M status=progress conv=fsync && sync
 	@echo "$(GREEN)SD card burning completed successfully!$(RESET)"
 	@echo "$(YELLOW)Would you like to eject the SD card now? (y/N)$(RESET)"
 	@read -p "Confirm ejection: " user_choice; \
