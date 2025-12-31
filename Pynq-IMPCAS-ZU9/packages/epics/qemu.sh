@@ -1,6 +1,16 @@
 #!/bin/bash
 
-sudo mkdir -p /opt/epics
-sudo chown xilinx:xilinx /opt/epics
+set -e
+set -x
+
+. /etc/environment
+for f in /etc/profile.d/*.sh; do source $f; done
+
+export HOME=/root
+export BOARD=${PYNQ_BOARD}
+
+mkdir -p /opt/epics
+chown xilinx:xilinx /opt/epics
 cd /opt/epics
 git clone --recursive -b 7.0 https://github.com/epics-base/epics-base.git base-7.0
+chown -R xilinx:xilinx base-7.0

@@ -1,23 +1,34 @@
 #!/bin/bash
 
-echo "Install utils via APT..."
-sudo apt install -y \
+set -e
+set -x
+
+. /etc/environment
+for f in /etc/profile.d/*.sh; do source $f; done
+
+export HOME=/root
+
+# INFO: don't add sudo
+apt install -y \
   ripgrep smbclient avahi-utils btop iotop sysstat strace ltrace \
   u-boot-tools tio net-tools minicom libtool \
   cmake autoconf automake gdb-multiarch gdbserver valgrind ninja-build \
   git-lfs screen xterm gawk xz-utils util-linux
-sudo apt install -y bc bison flex libssl-dev libelf-dev libncurses-dev libfdt-dev
 
-echo "Install fzf..."
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-echo -e "y\\ny\\ny\\n" ~/.fzf/install
+apt install -y bc bison flex libssl-dev libelf-dev libncurses-dev libfdt-dev
 
-echo "Install zellij..."
-wget -qO- https://github.com/zellij-org/zellij/releases/latest/download/zellij-aarch64-unknown-linux-musl.tar.gz | sudo tar -xzf - -C /usr/local/bin/ zellij && sudo chmod +x /usr/local/bin/zellij
 
-echo "Install uv..."
+cd /home/xilinx
+
+git clone --depth 1 https://github.com/junegunn/fzf.git .fzf
+echo -e "y\\ny\\ny\\n" .fzf/install
+chown -R xilinx:xilinx .fzf
+
+wget -qO- https://github.com/zellij-org/zellij/releases/latest/download/zellij-aarch64-unknown-linux-musl.tar.gz | \
+  sudo tar -xzf - -C /usr/local/bin/ zellij && sudo chmod +x /usr/local/bin/zellij
+
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-echo "Install zoxide (this should be the last one)..."
+# INFO: should be the last one which modifies /home/xilinx/.bashrc
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-grep -q 'eval "\$(zoxide init bash)"' ~/.bashrc || echo 'eval "$(zoxide init bash)"' >> ~/.bashrc
+grep -q 'eval "\$(zoxide init bash)"' .bashrc || echo 'eval "$(zoxide init bash)"' >> .bashrc
