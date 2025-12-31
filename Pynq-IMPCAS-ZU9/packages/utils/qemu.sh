@@ -30,5 +30,5 @@ wget -qO- https://github.com/zellij-org/zellij/releases/latest/download/zellij-a
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # INFO: should be the last one which modifies /home/xilinx/.bashrc
-curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --arch aarch64-unknown-linux-musl
 grep -q 'eval "\$(zoxide init bash)"' .bashrc || echo 'eval "$(zoxide init bash)"' >> .bashrc
