@@ -147,6 +147,20 @@ sdcard-burn: ## Actually burn image to SD card (internal use only)
 	@echo "$(BLUE)Burning image to $(SDCARD_DEVICE)...$(RESET)"
 	sudo dd if=$$(ls $(IMAGE_FILE)) of=$(SDCARD_DEVICE) bs=4M status=progress conv=fsync && sync
 	@echo "$(GREEN)SD card burning completed successfully!$(RESET)"
+	@echo "$(YELLOW)Would you like to eject the SD card now? (y/N)$(RESET)"
+	@read -p "Confirm ejection: " user_choice; \
+	if [ "$$user_choice" = "y" ] || [ "$$user_choice" = "Y" ]; then \
+		echo "$(BLUE)Ejecting $(SDCARD_DEVICE)...$(RESET)"; \
+		if command -v eject >/dev/null 2>&1; then \
+			sudo eject $(SDCARD_DEVICE) && echo "$(GREEN)SD card has been safely ejected. You can now remove it.$(RESET)"; \
+		else \
+			echo "$(YELLOW)'eject' command not found. Ensuring all data is written...$(RESET)"; \
+			sync; \
+			echo "$(GREEN)Data sync complete. It is now safe to remove the SD card.$(RESET)"; \
+		fi; \
+	else \
+		echo "$(BLUE)SD card ejection skipped. Remember to safely eject it later before removal.$(RESET)"; \
+	fi
 
 .PHONY: sdcard-list
 sdcard-list: ## List available block devices for SD card selection
