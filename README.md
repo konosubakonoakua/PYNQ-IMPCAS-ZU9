@@ -39,6 +39,17 @@ cd pynq/sdbuild
 make checkenv
 ```
 
+If you are in a github restricted region, try the following command first to test connectivity.
+```bash
+git ls-remote https://github.com/Xilinx/embeddedsw.git | grep master
+```
+
+If you have a working proxy, set proxy environment variables in `qemu/pre.sh`:
+```bash
+export http_proxy=http://192.168.138.254:7897
+export https_proxy=http://192.168.138.254:7897
+```
+
 In the root directory (`<LOCAL_PYNQ-IMPCAS-ZU9_REPO>/`) run `make`.
 
 ```shell
@@ -50,3 +61,9 @@ Once the build has completed, if successful a SD card image will be available un
 Use Etcher or Win32DiskImager or Rufus to write this image to an SD card.
 
 ---------------------------------------
+
+## Create new designs for PYNQ
+All we need finally is a **XSA** file.
+
+### PS presets
+After adding the Processing System (PS) to the block design, the `base/ps.tcl`script should be applied. This script handles fundamental configurations such as **DDR**, **clock**, **SD-CARD**, **UART**, and **Ethernet**. You should definitely NOT to modify them.

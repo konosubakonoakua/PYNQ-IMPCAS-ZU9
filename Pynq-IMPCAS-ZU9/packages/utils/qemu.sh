@@ -8,6 +8,9 @@ for f in /etc/profile.d/*.sh; do source $f; done
 
 export HOME=/root
 
+# export http_proxy=http://192.168.138.254:7897
+# export https_proxy=http://192.168.138.254:7897
+
 # INFO: don't add sudo
 apt install -y \
   ripgrep smbclient avahi-utils btop iotop sysstat strace ltrace \

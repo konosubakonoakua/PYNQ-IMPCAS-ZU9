@@ -1,0 +1,28 @@
+diff --git a/sdbuild/packages/pynq/pre.sh b/sdbuild/packages/pynq/pre.sh
+index a4741516..418d2821 100755
+--- a/sdbuild/packages/pynq/pre.sh
++++ b/sdbuild/packages/pynq/pre.sh
+@@ -3,6 +3,9 @@
+ set -x
+ set -e
+ 
++export http_proxy=http://192.168.138.254:7897
++export https_proxy=http://192.168.138.254:7897
++
+ target=$1
+ pynqoverlays_dir=$target/usr/local/share/pynq-venv/lib/python3.10/site-packages/pynq/overlays
+ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+diff --git a/sdbuild/packages/pynq/qemu.sh b/sdbuild/packages/pynq/qemu.sh
+index 003abf15..c9f85d23 100755
+--- a/sdbuild/packages/pynq/qemu.sh
++++ b/sdbuild/packages/pynq/qemu.sh
+@@ -10,6 +10,9 @@ for f in /etc/profile.d/*.sh; do source $f; done
+ export HOME=/root
+ export BOARD=${PYNQ_BOARD}
+ 
++export http_proxy=http://192.168.138.254:7897
++export https_proxy=http://192.168.138.254:7897
++
+ cd /home/xilinx
+ mkdir -p jupyter_notebooks
+ 

@@ -9,6 +9,9 @@ for f in /etc/profile.d/*.sh; do source $f; done
 export HOME=/root
 export BOARD=${PYNQ_BOARD}
 
+# export http_proxy=http://192.168.138.254:7897
+# export https_proxy=http://192.168.138.254:7897
+
 mkdir -p /opt/epics
 chown xilinx:xilinx /opt/epics
 cd /opt/epics
