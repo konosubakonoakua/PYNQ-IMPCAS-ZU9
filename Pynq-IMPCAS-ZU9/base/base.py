@@ -2,6 +2,9 @@ import pynq
 import pynq.lib
 from pynq.lib.logictools import TraceAnalyzer
 
+__author__ = "Rafael.Ren"
+__copyright__ = "Copyright 2025, IMPCAS"
+__email__ = "rafael.ren@foxmail.com"
 
 class BaseOverlay(pynq.Overlay):
     """Custom base overlay for your board"""
