@@ -28,7 +28,7 @@ echo -e "y\\ny\\ny\\n" .fzf/install
 chown -R xilinx:xilinx .fzf
 
 wget -qO- https://github.com/zellij-org/zellij/releases/latest/download/zellij-aarch64-unknown-linux-musl.tar.gz | \
-  sudo tar -xzf - -C /usr/local/bin/ zellij && sudo chmod +x /usr/local/bin/zellij
+  tar -xzf - -C /usr/local/bin/ zellij && chmod +x /usr/local/bin/zellij
 
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
