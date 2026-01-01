@@ -144,22 +144,32 @@ sdcard-confirm: check-image check-sdcard ## Burn image to SD card with interacti
 
 .PHONY: sdcard-burn
 sdcard-burn: ## Actually burn image to SD card (internal use only)
-	@echo "$(BLUE)Burning image to $(SDCARD_DEVICE)...$(RESET)"
-	sudo dd if=$$(ls $(IMAGE_FILE)) of=$(SDCARD_DEVICE) bs=4M status=progress conv=fsync && sync
-	@echo "$(GREEN)SD card burning completed successfully!$(RESET)"
-	@echo "$(YELLOW)Would you like to eject the SD card now? (y/N)$(RESET)"
-	@read -p "Confirm ejection: " user_choice; \
+	$(eval ACTUAL_IMAGE := $(lastword $(sort $(wildcard $(IMAGE_FILE)))))
+	@if [ -z "$(ACTUAL_IMAGE)" ]; then \
+		echo "$(RED)Error: No image file found matching $(IMAGE_FILE)$(RESET)"; exit 1; \
+	fi; \
+	echo "$(BLUE)[1/3] Checking for mounted partitions on $(SDCARD_DEVICE)...$(RESET)"; \
+	MOUNTPOINTS=$$(lsblk -ln -o MOUNTPOINT $(SDCARD_DEVICE) | grep -v "^$$"); \
+	if [ -n "$$MOUNTPOINTS" ]; then \
+		echo "$(YELLOW)Device is mounted on: $$MOUNTPOINTS. Unmounting...$(RESET)"; \
+		sudo umount $(SDCARD_DEVICE)* 2>/dev/null || true; \
+		sudo umount -l $(SDCARD_DEVICE) 2>/dev/null || true; \
+	else \
+		echo "$(GREEN)Device is not mounted. Safe to proceed.$(RESET)"; \
+	fi; \
+	echo "$(BLUE)[2/3] Burning image: $(ACTUAL_IMAGE)$(RESET)"; \
+	sudo dd if=$(ACTUAL_IMAGE) of=$(SDCARD_DEVICE) bs=8M status=progress oflag=dsync; \
+	echo "$(BLUE)[3/3] Flushing ...$(RESET)"; \
+	sync; \
+	echo "$(YELLOW)------------------------------------------------$(RESET)"; \
+	echo "$(GREEN)Burning process completed successfully!$(RESET)"; \
+	read -p "Eject SD card now? (y/N): " user_choice; \
 	if [ "$$user_choice" = "y" ] || [ "$$user_choice" = "Y" ]; then \
 		echo "$(BLUE)Ejecting $(SDCARD_DEVICE)...$(RESET)"; \
-		if command -v eject >/dev/null 2>&1; then \
-			sudo eject $(SDCARD_DEVICE) && echo "$(GREEN)SD card has been safely ejected. You can now remove it.$(RESET)"; \
-		else \
-			echo "$(YELLOW)'eject' command not found. Ensuring all data is written...$(RESET)"; \
-			sync; \
-			echo "$(GREEN)Data sync complete. It is now safe to remove the SD card.$(RESET)"; \
-		fi; \
+		sudo eject $(SDCARD_DEVICE) 2>/dev/null || (sync && echo "$(GREEN)Cache synced. Safe to remove.$(RESET)"); \
+		echo "$(GREEN)Device ejected.$(RESET)"; \
 	else \
-		echo "$(BLUE)SD card ejection skipped. Remember to safely eject it later before removal.$(RESET)"; \
+		echo "$(BLUE)Remember to eject the device before physical removal.$(RESET)"; \
 	fi
 
 .PHONY: sdcard-list
