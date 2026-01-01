@@ -1,28 +1,56 @@
 diff --git a/sdbuild/packages/pynq/pre.sh b/sdbuild/packages/pynq/pre.sh
-index a4741516..418d2821 100755
+index a4741516..3f62eada 100755
 --- a/sdbuild/packages/pynq/pre.sh
 +++ b/sdbuild/packages/pynq/pre.sh
-@@ -3,6 +3,9 @@
+@@ -3,6 +3,16 @@
  set -x
  set -e
  
-+export http_proxy=http://192.168.138.254:7897
-+export https_proxy=http://192.168.138.254:7897
++PROXY_HOST=192.168.138.254
++PROXY_PORT=7897
++PROXY_URL="http://${PROXY_HOST}:${PROXY_PORT}"
++export http_proxy=$PROXY_URL
++export https_proxy=$PROXY_URL
++export HTTP_PROXY=$PROXY_URL
++export HTTPS_PROXY=$PROXY_URL
++git config --global http.proxy $PROXY_URL
++git config --global https.proxy $PROXY_URL
 +
  target=$1
  pynqoverlays_dir=$target/usr/local/share/pynq-venv/lib/python3.10/site-packages/pynq/overlays
  script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+@@ -81,3 +91,6 @@ else
+     # nothing to do except copy sdist to target folder
+     sudo cp ${PYNQ_SDIST} $target/home/xilinx/pynq_git/dist	
+ fi
++
++git config --global --unset http.proxy
++git config --global --unset https.proxy
 diff --git a/sdbuild/packages/pynq/qemu.sh b/sdbuild/packages/pynq/qemu.sh
-index 003abf15..c9f85d23 100755
+index 003abf15..85130c99 100755
 --- a/sdbuild/packages/pynq/qemu.sh
 +++ b/sdbuild/packages/pynq/qemu.sh
-@@ -10,6 +10,9 @@ for f in /etc/profile.d/*.sh; do source $f; done
+@@ -10,6 +10,16 @@ for f in /etc/profile.d/*.sh; do source $f; done
  export HOME=/root
  export BOARD=${PYNQ_BOARD}
  
-+export http_proxy=http://192.168.138.254:7897
-+export https_proxy=http://192.168.138.254:7897
++PROXY_HOST=192.168.138.254
++PROXY_PORT=7897
++PROXY_URL="http://${PROXY_HOST}:${PROXY_PORT}"
++export http_proxy=$PROXY_URL
++export https_proxy=$PROXY_URL
++export HTTP_PROXY=$PROXY_URL
++export HTTPS_PROXY=$PROXY_URL
++git config --global http.proxy $PROXY_URL
++git config --global https.proxy $PROXY_URL
 +
  cd /home/xilinx
  mkdir -p jupyter_notebooks
  
+@@ -51,3 +61,6 @@ chown xilinx:xilinx /home/xilinx/REVISION
+ chown xilinx:xilinx -R /home/xilinx/pynq
+ chown xilinx:xilinx -R /home/xilinx/jupyter_notebooks
+ chown xilinx:xilinx -R $pynq_dir
++
++git config --global --unset http.proxy
++git config --global --unset https.proxy

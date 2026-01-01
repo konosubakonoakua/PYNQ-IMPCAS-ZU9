@@ -6,10 +6,17 @@ set -x
 . /etc/environment
 for f in /etc/profile.d/*.sh; do source $f; done
 
-export HOME=/root
+export HOME=/home/xilinx
 
-# export http_proxy=http://192.168.138.254:7897
-# export https_proxy=http://192.168.138.254:7897
+# PROXY_HOST=192.168.138.254
+# PROXY_PORT=7897
+# PROXY_URL="http://${PROXY_HOST}:${PROXY_PORT}"
+# export http_proxy=$PROXY_URL
+# export https_proxy=$PROXY_URL
+# export HTTP_PROXY=$PROXY_URL
+# export HTTPS_PROXY=$PROXY_URL
+# git config --global http.proxy $PROXY_URL
+# git config --global https.proxy $PROXY_URL
 
 # INFO: don't add sudo
 apt install -y \
@@ -54,11 +61,11 @@ git_clone_with_retry() {
 }
 
 cd /home/xilinx
+mkdir -p /home/xilinx/.local/bin
 
 # Use the retry function for git clone
 git_clone_with_retry https://github.com/junegunn/fzf.git .fzf
-echo -e "y\\ny\\ny\\n" | .fzf/install
-chown -R xilinx:xilinx .fzf
+/home/xilinx/.fzf/install --all
 
 wget -qO- https://github.com/zellij-org/zellij/releases/latest/download/zellij-aarch64-unknown-linux-musl.tar.gz |
 	tar -xzf - -C /usr/local/bin/ zellij && chmod +x /usr/local/bin/zellij
@@ -68,3 +75,10 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # INFO: should be the last one which modifies /home/xilinx/.bashrc
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --arch aarch64-unknown-linux-musl
 grep -q 'eval "\$(zoxide init bash)"' .bashrc || echo 'eval "$(zoxide init bash)"' >>.bashrc
+
+chown -R xilinx:xilinx /home/xilinx/.fzf
+chown -R xilinx:xilinx /home/xilinx/.local
+chown xilinx:xilinx /home/xilinx/.bashrc
+
+# git config --global --unset http.proxy
+# git config --global --unset https.proxy
