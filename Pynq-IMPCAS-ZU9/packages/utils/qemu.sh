@@ -23,7 +23,7 @@ apt install -y \
 	ripgrep smbclient avahi-utils btop iotop sysstat strace ltrace \
 	u-boot-tools tio net-tools minicom libtool \
 	cmake autoconf automake gdb-multiarch gdbserver valgrind ninja-build \
-	git-lfs screen xterm gawk xz-utils util-linux
+	git-lfs screen tmux procServ xterm gawk xz-utils util-linux
 
 apt install -y bc bison flex libssl-dev libelf-dev libncurses-dev libfdt-dev
 
