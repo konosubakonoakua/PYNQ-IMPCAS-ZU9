@@ -81,16 +81,6 @@ clean: ## Remove all build artifacts
 	cd ${ROOT_PATH}/pynq/sdbuild/ && make clean
 	@echo "$(GREEN)All build artifacts cleaned$(RESET)"
 
-.PHONY: unmount
-unmount: ## Unmount any mounted images
-	cd ${ROOT_PATH}/pynq/sdbuild/ && make unmount
-	@echo "$(GREEN)Mounted images unmounted$(RESET)"
-
-.PHONY: delete
-delete: ## Unmount and delete failed images
-	cd ${ROOT_PATH}/pynq/sdbuild/ && make delete
-	@echo "$(GREEN)Failed images deleted$(RESET)"
-
 .PHONY: base
 base: ${BOARD_FILES} check-xsa ## Verify and build base hardware design
 	@echo "$(GREEN)XSA file verification passed for ${BOARD_NAME}$(RESET)"
@@ -294,8 +284,6 @@ help: ## Show this help message
 	@echo '  $(BLUE)make sdcard$(RESET)                         Burn image to SD card'
 	@echo '  $(BLUE)make sdcard SDCARD_DEVICE=/dev/sdc$(RESET)  Burn to specific device'
 	@echo '  $(BLUE)make status$(RESET)                         Show build status'
-	@echo '  $(BLUE)make unmount$(RESET)                        Unmount ANY mounted images'
-	@echo '  $(BLUE)make delete$(RESET)                         Unmount and delete failed images'
 	@echo '  $(BLUE)make clean$(RESET)                          Clean all artifacts'
 	@echo ''
 
@@ -304,6 +292,6 @@ help: ## Show this help message
 download-rootfs: ${PREBUILT_IMAGE} ## Alias for downloading rootfs
 download-sdist: ${PREBUILT_SDIST}  ## Alias for downloading sdist
 
-.PHONY: all image boot_files bsp sysroot clean unmount delete base check-xsa
+.PHONY: all image boot_files bsp sysroot clean base check-xsa
 .PHONY: sdcard sdcard-confirm sdcard-burn sdcard-list sdcard-format sdcard-safe check-sdcard check-image
 .PHONY: gitsubmodule cleanbuild status help download-rootfs download-sdist
