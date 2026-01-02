@@ -50,6 +50,13 @@ export http_proxy=http://192.168.138.254:7897
 export https_proxy=http://192.168.138.254:7897
 ```
 
+If you still encounter git proxy issue when cloning `Xilinx/embeddedsw`, you can clone it manually:
+```bash
+export http_proxy=http://192.168.138.254:7897
+export https_proxy=http://192.168.138.254:7897
+cd pynq/sdbuild/build/PYNQ && git submodule init && git submodule update
+```
+
 In the root directory (`<LOCAL_PYNQ-IMPCAS-ZU9_REPO>/`) run `make`.
 
 ```shell
@@ -67,3 +74,17 @@ All we need finally is a **XSA** file.
 
 ### PS presets
 After adding the Processing System (PS) to the block design, the `base/ps.tcl`script should be applied. This script handles fundamental configurations such as **DDR**, **clock**, **SD-CARD**, **UART**, and **Ethernet**. You should definitely NOT to modify them.
+
+## Trouble shooting
+
+### Stuck at `Starting kernel ...` after boot
+A clean build is the life saver, IDKY.
+```bash
+sudo make clean
+taskset -c 0,1,2,3 make all 2>&1 | tee "pynq_build_$(date +%Y%m%d_%H%M%S).log"
+```
+
+Or try to delete petalinux artifacts before rebuild:
+```bash
+rm -rf pynq/sdbuild/build/Pynq-IMPCAS-ZU9
+```
