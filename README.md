@@ -1,4 +1,7 @@
 ## Build PYNQ SD Image for Pynq-IMPCAS-ZU9
+- [codeberg.org/RafaelRen/PYNQ-IMPCAS-ZU9](https://codeberg.org/RafaelRen/PYNQ-IMPCAS-ZU9) (mirror)
+- [github.com/konosubakonoakua/PYNQ-IMPCAS-ZU9](https://github.com/konosubakonoakua/PYNQ-IMPCAS-ZU9) (latest)
+- [gitee.com/impcas_beam_diagnosis/PYNQ-IMPCAS-ZU9](https://gitee.com/impcas_beam_diagnosis/PYNQ-IMPCAS-ZU9) (no LFS support)
 
 ### Prerequisites
 
