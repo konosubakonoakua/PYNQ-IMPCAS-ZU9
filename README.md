@@ -75,6 +75,10 @@ All we need finally is a **XSA** file.
 ### PS presets
 After adding the Processing System (PS) to the block design, the `base/ps.tcl`script should be applied. This script handles fundamental configurations such as **DDR**, **clock**, **SD-CARD**, **UART**, and **Ethernet**. You should definitely NOT to modify them.
 
+### Custom Device Tree Overlay
+- https://discuss.pynq.io/t/device-tree-overlay-example/543
+- https://github.com/konosubakonoakua/PYNQ-PRIO
+
 ## Trouble shooting
 
 ### Stuck at `Starting kernel ...` after boot
